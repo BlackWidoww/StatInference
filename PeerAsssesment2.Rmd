@@ -1,0 +1,62 @@
+---
+output: pdf_document
+---
+# Exploratory Analysis of ToothGrowth Data Set in R
+## Data Analysis Series:  Statistical Inference
+
+
+### Summary
+
+Effects of Vitamin C on tooth growth in guinea pigs was studied using 10 guinea pigs, each receiving three dose levels of Vitamin C (0.5, 1.0, and 2.0 mg) and each of two delivery methods (orange juice and ascorbic acid).  Higher dosage levels significantly predicted greater tooth growth.  Tooth growth was not significantly effected by supplement type.  
+
+```{r readData}
+library(datasets); data = ToothGrowth
+observations <- nrow(data); variables <- ncol(data); names <- names(data); mean.tooth<-mean(data$len)
+```
+
+ 
+
+
+### Exploratory Analysis
+```{r dataSummary}
+low <- subset(data, data$dose==0.5); med <- subset(data, data$dose==1.0); 
+high <- subset(data, data$dose==2.0)
+
+VC <- subset(data, data$supp=="VC"); OJ <- subset(data, data$supp=="OJ")
+lowVC <- subset(VC, VC[,3]==0.5); medVC <- subset(VC, VC[,3]==1.0); highVC <- subset(VC, VC[,3]==2.0)
+lowOJ <- subset(OJ, OJ[,3]==0.5); medOJ <- subset(OJ, OJ[,3]==1.0); 
+highOJ <- subset(OJ, OJ[,3]==2.0)
+
+### Graphs of data by factor and interaction
+par(mfrow=c(2,2))
+plot(density(low$len), col="red", xlim=c(0,40), ylim=c(0,0.15), lwd=2, main="Dosage Amount", xlab="Tooth Length(mm)")
+lines(density(med$len), col="green", lwd=2); lines(density(high$len), col="blue", lwd=2)
+
+plot(density(OJ$len), col="orange", lwd=2, main="Delivery Method", xlab="Tooth Length (mm)") 
+lines(density(VC$len), col="purple", lwd=2)
+
+plot(density(highVC$len), col="blue", lwd=2, xlim=c(0,40), ylim=c(0,0.25), 
+     main="Ascorbic Acid Dosage Amount", xlab="Tooth Length (mm)") 
+lines(density(medVC$len), col="green", lwd=2); lines(density(lowVC$len), col="red", lwd=2)
+
+plot(density(highOJ$len), col="blue", lwd=2, xlim=c(0,40), ylim=c(0,0.25),
+     main="Orange Juice Dosage", xlab="Tooth Length (mm)") 
+lines(density(medOJ$len), col="green", lwd=2); lines(density(lowOJ$len), col="red", lwd=2)
+```
+
+
+**FIGURE 1:  Factor Level Effects and Interaction Effects**  Factor level effects are discernible between dosage levels: *low (0.5ml) = red, medium (1.0ml) = green, high (2.0ml) = blue*, while effects of supplement type: *juice = orange and acid = purple* is less significant.  Dosage level effects are more clearly observed when data is separated by supplement type.  Analysis of Variance and Null Hypothesis Significance Tests will confirm whether significant differences in dosage type and/or delivery method are present.  
+
+### Null Hypothesis Significance Testing of Factor Level Effects 
+```{r NHST}
+t.test(data$len, data$dose)
+t.test(VC$len, VC$dose)
+t.test(OJ$len, OJ$dose)
+```
+NHST and confidence intervals show that dose level is significant in explaining variation in pooled data, as well as in data factored by supplement type.  Supplement type alone cannot significantly explain variation in tooth growth.  
+
+
+### Conclusions and Assumptions
+
+Intake of Vitamin C leads to tooth growth.  Higher dosages lead to greater tooth growth, while intake type (ascorbic acid or orange juice) is not significant.  
+
